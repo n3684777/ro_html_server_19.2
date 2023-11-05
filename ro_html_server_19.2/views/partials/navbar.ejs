@@ -1,0 +1,18 @@
+<div class="navbar">
+  <ul class="nav">
+    <li class="nav-item"><a href="/" class="nav-link">首頁</a></li>
+    <% if(!user) { %>
+    <li class="nav-item">
+      <a href="/auth/login" class="nav-link">登入</a>
+    </li>
+    <li class="nav-item">
+      <a href="/auth/signup" class="nav-link">註冊</a>
+    </li>
+    <% }else{ %>
+    <li class="nav-item"><a href="/auth/logout" class="nav-link">登出</a></li>
+    <% } %>
+    <li class="nav-item"><a href="/board" class="nav-link">留言板</a></li>
+    <li class="nav-item"><a href="/contactUS" class="nav-link">聯絡我們</a></li>
+    <li class="nav-item"><a href="/member" class="nav-link">會員中心</a></li>
+  </ul>
+</div>

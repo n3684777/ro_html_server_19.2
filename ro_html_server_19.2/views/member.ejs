@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/normalize.css" />
+    <!-- <link rel="stylesheet" href="./css/bootstrap.css" /> -->
+    <!-- <link rel="stylesheet" href="./css/all.css" /> -->
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
+    <script src="./js/socket.js"></script>
+    <script src="./js/all.js"></script>
+    <title>會員中心</title>
+  </head>
+  <body>
+    <div class="container-full"><%- include("./partials/navbar") %></div>
+    <div class="container-full">
+      <div class="jumbotron"></div>
+    </div>
+    <div class="container font-white">
+      <% if(!user) { %>
+      <p>請<a href="/auth/login" class="">登入</a>會員以使用會員中心</p>
+      <% }else{ %>
+      <p>會員資訊 :</p>
+      <p>帳號ID : <%= user.account_id %></p>
+      <p>帳號 : <%= user.userid %></p>
+      <p>
+        性別 : <% if(user.sex == "M") { %>男 <% }else if(user.sex == "F") {
+        %>女<% } %>
+      </p>
+      <p>email : <%= user.email %></p>
+      <p>
+        帳號權限等級 : <%= user.group_id %> <% if(user.group_id == 99) {%><a
+          href="/member/roles"
+          >更改權限功能</a
+        >
+        <% } %>
+      </p>
+      <% } %>
+    </div>
+  </body>
+</html>
