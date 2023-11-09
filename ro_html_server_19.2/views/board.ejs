@@ -35,7 +35,9 @@
         <input type="checkbox" name="anonymous" />
         <button type="submit">刊登留言</button>
       </form>
-      <% } %>
+      <% if(error_msg) { %>
+      <p><%= error_msg %></p>
+      <% } %> <% } %>
     </div>
   </body>
 </html>

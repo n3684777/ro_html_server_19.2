@@ -17,23 +17,22 @@
     <div class="container-full">
       <div class="jumbotron"></div>
     </div>
-    <div class="container font-white">
-      <form action="/auth/signup" method="POST" class="form">
-        <label for="userid">帳號 : </label>
-        <input type="text" name="userid" required="true" />
-        <label for="user_pass">密碼 : </label>
-        <input type="password" name="user_pass" required="true" />
-        <label for="email">email : </label>
-        <input type="email" name="email" required="true" />
-        <label for="userid">性別 : </label>
-        <select name="sex">
-          <option value="M">男</option>
-          <option value="F">女</option>
-        </select>
-
-        <button type="submit">送出</button>
-        <% if(error_msg) { %><%= error_msg %><% } %>
-      </form>
+    <div class="hero">
+      <div class="container font-white">
+        <form action="/member/roles/send" method="POST">
+          <label for="char_name">收貨人 : </label>
+          <input type="text" name="char_name" />
+          <label for="nameid">寄送道具ID : </label>
+          <input type="number" name="nameid" />
+          <label for="amount">數量 : </label>
+          <input type="number" name="amount" />
+          <button type="submit">寄送</button>
+        </form>
+        <% if(error_msg) { %><%= error_msg %> <% } %>
+      </div>
     </div>
+    <script>
+      //   setInterval("location.href = 'http://localhost:8051/auth/login'", 3000);
+    </script>
   </body>
 </html>

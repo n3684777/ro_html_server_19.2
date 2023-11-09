@@ -1,6 +1,21 @@
 const Router = require("express").Router();
 const passport = require("passport");
 const mysql = require("../mysql");
+const { validLogin, validPost } = require("../validate");
+
+// mysql.query(
+//   `SELECT TABLE_NAME, COLUMN_NAME
+//   FROM INFORMATION_SCHEMA.COLUMNS
+//   WHERE TABLE_SCHEMA = 'main'
+//   AND COLUMN_NAME = 'id';`,
+//   (err, result) => {
+//     if (err) {
+//       console.log(err);
+//     } else {
+//       console.log(result);
+//     }
+//   }
+// );
 
 Router.use((req, res, next) => {
   console.log("A request coming into auth.js");
@@ -23,7 +38,11 @@ Router.get("/signup", (req, res) => {
 
 Router.post("/signup", (req, res) => {
   const { email, userid, user_pass, sex } = req.body;
-
+  const valid = validLogin(req.body);
+  if (valid.error.details[0].message) {
+    req.flash("error_msg", valid.error.details[0].message);
+    return res.redirect("/auth/signup");
+  }
   mysql.query(
     `SELECT userid FROM login WHERE userid = '${userid}'`,
     (err, result) => {
@@ -38,7 +57,7 @@ Router.post("/signup", (req, res) => {
               console.log(err);
               res.send("註冊錯誤");
             } else {
-              console.log(result);
+              // console.log(result);
               req.flash("success_msg", "註冊成功，五秒後導向至登入頁面");
               res.render("ok", {
                 user: req.user,
