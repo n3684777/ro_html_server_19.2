@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/styles.css" />
     <script src="/js/socket.js"></script>
     <script src="/js/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.1/axios.js"></script>
     <title>首頁</title>
   </head>
   <body>
@@ -18,22 +19,20 @@
       <div class="jumbotron"></div>
     </div>
     <div class="hero">
-      <div class="container font-white">
-        <form action="/member/roles/send" method="POST">
-          <label for="char_name">收貨人 : </label>
-          <input type="text" name="char_name" />
-          <label for="nameid">寄送道具ID : </label>
-          <input type="number" name="nameid" />
-          <label for="amount">數量 : </label>
-          <input type="number" name="amount" />
-          <button type="submit">寄送</button>
-        </form>
-        <% if(error_msg) { %><%= error_msg %> <% } %> <% if(success_msg) { %><%=
-        success_msg %> <% } %>
+      <div class="container">
+        <input type="text" id="searchbox" oninput="onevent()" />
+        <div class="result"></div>
       </div>
     </div>
     <script>
-      //   setInterval("location.href = 'http://localhost:8051/auth/login'", 3000);
+      function onevent() {
+        let input = document.querySelector("#searchbox").value;
+        axios.get("/test2").then(async (res) => {
+          let data = await res.data;
+
+          console.log(data.indexOf(Number(input)));
+        });
+      }
     </script>
   </body>
 </html>

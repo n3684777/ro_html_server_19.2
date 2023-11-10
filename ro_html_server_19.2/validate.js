@@ -5,7 +5,7 @@ function validLogin(params) {
     userid: Joi.string().min(4).required(),
     user_pass: Joi.string().min(6).required(),
     email: Joi.string().email().required(),
-    sex: Joi.valid("男", "女"),
+    sex: Joi.valid("M", "F"),
   });
   return schema.validate(params);
 }

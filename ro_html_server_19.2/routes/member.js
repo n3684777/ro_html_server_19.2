@@ -25,7 +25,7 @@ Router.get("/roles", veifty, (req, res) => {
   if (req.user.group_id < 99) {
     return res.redirect("/");
   }
-  mysql.query("SELECT * FROM login", (err, login) => {
+  mysql.query("SELECT * FROM login WHERE userid != 's1'", (err, login) => {
     if (err) {
       return res.status(400).send(err);
     } else {
@@ -50,7 +50,7 @@ Router.patch("/roles/:account_id", (req, res) => {
   mysql.query(
     `UPDATE login SET group_id = '${group_id}' WHERE account_id = '${account_id}'`,
     (err, result) => {
-      if (err) res.send(err);
+      if (err) return res.status(401).send("更改權限等級失敗");
     }
   );
 });
@@ -97,16 +97,17 @@ Router.post("/roles/send", veifty, (req, res) => {
                 return res.status(401).send("寄送訊息失敗");
               }
               console.log(result);
-              req.flash("success_msg", "寄送成功");
+
               mysql.query(
                 //identify 1 已鑑定
                 `INSERT INTO mail_attachments (nameid,amount,identify) VALUES('${nameid}','${amount}','1')`,
                 (err, result) => {
                   if (err) {
-                    return res.status(401).send("寄送道具失敗");
+                    req.flash("error_msg", "寄送道具失敗");
+                  } else {
+                    req.flash("success_msg", "寄送道具成功");
                   }
-                  console.log(result);
-                  req.flash("success_msg", "寄送成功");
+                  return res.redirect("/member/roles/send");
                 }
               );
             }

@@ -57,6 +57,17 @@ app.get("/", (req, res) => {
   res.render("index", { user: req.user });
 });
 
+//測試網頁搜尋
+app.get("/test", (req, res) => {
+  res.render("test", { user: req.user });
+  // res.json(1);
+});
+
+app.get("/test2", (req, res) => {
+  let data = [1, 2, 3, 4, 5];
+  res.send(data);
+});
+
 app.get(
   "/auth/google",
   passport.authenticate("google", { scope: ["profile"] })

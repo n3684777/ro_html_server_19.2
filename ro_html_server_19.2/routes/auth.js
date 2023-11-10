@@ -30,16 +30,25 @@ function veifty(req, res, next) {
   }
 }
 
+function return_(req, res, next) {
+  if (req.isAuthenticated()) {
+    res.redirect("/");
+  } else {
+    next();
+  }
+}
+
 // signup
 
-Router.get("/signup", (req, res) => {
+Router.get("/signup", return_, (req, res) => {
   res.render("signup", { user: req.user });
 });
 
-Router.post("/signup", (req, res) => {
+Router.post("/signup", return_, (req, res) => {
   const { email, userid, user_pass, sex } = req.body;
+
   const valid = validLogin(req.body);
-  if (valid.error.details[0].message) {
+  if (valid.error) {
     req.flash("error_msg", valid.error.details[0].message);
     return res.redirect("/auth/signup");
   }

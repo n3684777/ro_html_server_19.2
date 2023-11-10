@@ -8,7 +8,11 @@
 
 a {
   text-decoration: none;
-  color: black;
+  color: orange;
+  font-weight: 1000;
+}
+a:hover {
+  color: green;
 }
 
 /* ------------ *\
