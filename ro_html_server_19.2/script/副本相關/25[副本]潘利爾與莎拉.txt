@@ -1,0 +1,1494 @@
+
+
+
+//===== Description: ==============================
+//
+//*************************************************
+//===================請保留以上資訊================
+
+
+1@glast	mapflag	noteleport
+1@glast	mapflag	nosave	SavePoint
+1@glast	mapflag	nomemo
+1@glast	mapflag	nobranch
+1@glast	mapflag	noicewall
+1@glast	mapflag	restricted	6
+1@glast	mapflag	monster_noteleport
+1@glast	mapflag	partylock
+1@glast	mapflag	novending
+1@glast	mapflag	nochat
+
+amatsu,108,158,5	script	[副本]潘利爾與莎拉	803,{
+	// 展示資訊
+	F_instanceinfo(strnpcinfo(1),.ins_name$,.ins_MinLv,.ins_MaxLv,.ins_Minplayer,.ins_Maxplayer,.ins_time,.ins_cooldown,.ins_collnum);
+	// 創建選單
+	switch(F_instancemenu(strnpcinfo(1),.ins_name$))
+	{
+		case 1:
+			// 創建副本 & 紀錄隊員訊息
+			F_instancecreat(strnpcinfo(1),.ins_name$,.ins_MinLv,.ins_MaxLv,.ins_Maxplayer);
+			end;
+		case 2:
+			// 進入副本 & 比對隊員訊息
+			F_instancenter(strnpcinfo(1),.ins_name$,.ins_MinLv,.ins_MaxLv,.ins_collnum,.ins_cooldown);
+			end;
+		case 3:
+			// 銷毀副本
+			F_instancedestroy;
+			end;
+		case 4:	
+			if ( !countitem(99999) ){
+				message strcharinfo(0),"你必須帶來 "+getitemname(99999)+" 才能消除冷卻!";
+				end;
+			}
+			// 銷毀冷卻
+			F_instancedelcool(.ins_collnum);
+			delitem 99999,1;
+			end;
+		default:
+			break;
+	}
+	end;
+OnInit:
+	// 副本名稱
+	.ins_name$ = "潘利爾與莎拉";
+	// 最小挑戰等級
+	.ins_MinLv = 1;
+	// 最大挑戰等級
+	.ins_MaxLv = 260;
+	// 最小組隊人數
+	.ins_Minplayer = 1;
+	// 最大組隊人數
+	.ins_Maxplayer = 12;
+	// 挑戰時間
+	.ins_time = 3600;
+	// 冷卻時間
+	.ins_cooldown = 7200;
+	// 冷卻編號
+	.ins_collnum = 25;
+
+//
+	waitingroom "[副本]潘利爾與莎拉",0;
+	setnpcicon getnpcid(0),22,"[副本]潘利爾與莎拉";
+	end;
+}
+
+
+//======================================================================
+// Instance Start
+//======================================================================
+
+1@glast,359,294,4	script	芬裡爾#snf1	4_F_FENRIR,{
+	if('SnfProgress)
+		end;
+	mes "- 看見了一名女性。 -";
+	if(getcharid(0) != getpartyleader(getcharid(1),2)) {
+		mes "- 還是讓隊長來和她交談吧。 -";
+		close;
+	}
+	next;
+	switch(select((checkquest(9338)==2)?"^0000FF跳過對話^000000":"","^FF0000和女性對話^000000")) {
+			case 1:
+			mes "跟著芬裡爾前進吧。";
+			close2;
+			break;
+		case 2:
+			close2;
+			'SnfProgress = 1;
+			unittalk getcharid(3), "你好~！你也是冒險者嗎？";
+			sleep2 3000;
+			npctalk "芬裡爾：克雷斯特漢姆看起來有些奇怪...以前有這樣的黑暗氣息麼？";
+			donpcevent instance_npcname("#cutinc")+"::OnFen1";
+			sleep2 4000;
+			npctalk "芬裡爾：不好意思，待會兒再打招呼吧，好像有魔獸靠近了！";
+			sleep2 3000;
+			donpcevent instance_npcname("#cutinc")+"::OnClear";
+			.@map$ = instance_mapname("1@glast");
+			.@label$ = instance_npcname("芬裡爾#snf1")+"::OnStoryMobs";
+			monster (.@map$,359,294,"",2337,1);
+			.@skillunit = $@mobid[0];
+			setunitdata .@skillunit,UMOB_MODE,0;
+			unitskilluseid .@skillunit, 685, 1;//685 NPC_INVINCIBLE
+			unitskilluseid .@skillunit,353,1;
+			npctalk "芬裡爾：請你為我的法術爭取一點時間！";
+			setarray .@x[0],359,356,354,356,360,363,365,363;
+			setarray .@y[0],300,298,294,290,288,290,294,298;
+			for(set .@i,0; .@i < 8; set .@i,.@i+1)
+				monster .@map$,.@x[.@i],.@y[.@i],"--ja--",3198,1,.@label$;
+			unittalk getcharid(3), "這些到底是什麼？";
+			sleep2 2000;
+			npctalk "芬裡爾：雷之精靈，請聽從我的呼喚！";
+			sleep2 2000;
+			npctalk "芬裡爾：劈開暗影，審判降臨！";
+			sleep2 1000;
+			npctalk "芬裡爾：雷爆術！";
+			for(set .@i,0; .@i < 4; set .@i,.@i+1)
+				npcskilleffect 21,1,.@x[rand(8)],.@y[rand(8)];
+			sleep2 1000;
+			for(set .@i,0; .@i < 4; set .@i,.@i+1)
+				npcskilleffect 21,1,.@x[rand(8)],.@y[rand(8)];
+			killmonster .@map$,.@label$;
+			mobremove .@skillunit;
+			sleep2 3000;
+			npctalk "芬裡爾：克雷斯特漢姆是過去的聖殿...";
+			donpcevent instance_npcname("#cutinc")+"::OnFen1";
+			sleep2 3000;
+			npctalk "芬裡爾：但如今已成為魔獸的棲息地了嗎？";
+			sleep2 3000;
+			npctalk "芬裡爾：等等，好像還有什麼不對勁...";
+			sleep2 2000;
+			npctalk "芬裡爾：鬣狗不應該出現在這種地方。";
+			sleep2 3000;
+			npctalk "芬裡爾：雖然很突然，但謝謝你幫助我。";
+			sleep2 2000;
+			npctalk "芬裡爾：冒昧的問一句，你來這是為了什麼呢？";
+			sleep2 3000;
+			donpcevent instance_npcname("#cutinc")+"::OnClear";
+			unittalk getcharid(3), "我是冒險者...";
+			sleep2 2000;
+			unittalk getcharid(3), "通過時間與空間的裂縫來到此地...";
+			sleep2 3000;
+			donpcevent instance_npcname("#cutinc")+"::OnFen1";
+			npctalk "芬裡爾：是嗎？原來如此。和這個世界沒有什麼聯繫啊...";
+			sleep2 3000;
+			npctalk "芬裡爾：這個地方非常危險，趁著還不遲，快點回去吧。";
+			sleep2 3000;
+			npctalk "芬裡爾：我有必須要尋找的東西，不能再浪費時間了。";
+			sleep2 3000;
+			donpcevent instance_npcname("#cutinc")+"::OnClear";
+			break;
+	}
+	hideonnpc instance_npcname("芬裡爾#snf1");
+	.@map$ = instance_mapname("1@glast");
+	mapannounce .@map$,"芬裡爾往南邊去了，跟上她吧！",bc_map,"0xFFFF00";
+	enablenpc instance_npcname("#snfwarp1choice");
+	setarray .@x[0],271,264,135,136,201,195,156,149,241,295,304,300,332,348,353,159, 67, 63;
+	setarray .@y[0],334,323,323,334, 55, 45, 48, 45, 48, 78, 80,221,263,134,121,111,163,190;
+	for(set .@i,0; .@i < getarraysize(.@x); set .@i,.@i+1) {
+		areamonster .@map$,.@x[.@i]-3,.@y[.@i]-3,.@x[.@i]+3,.@y[.@i]+3,"--ja--",3191,rand(2,3);
+		areamonster .@map$,.@x[.@i]-3,.@y[.@i]-3,.@x[.@i]+3,.@y[.@i]+3,"--ja--",3194,rand(2,3);
+	}
+	end;
+	
+OnStoryMobs:
+	end;
+	
+OnInstanceInit:
+	'partyid = 0;
+	'SnfProgress = 0;
+	end;
+}
+
+1@glast,1,1,0	script	#cutinc	CLEAR_NPC,{
+	end;
+OnView1:
+	script4each "{ viewpoint 1,47,270,1,0xFF0000; }",1,instance_mapname("1@glast");
+	end;
+OnView2:
+	script4each "{ viewpoint 1,351,271,1,0xFF0000; }",1,instance_mapname("1@glast");
+	end;
+OnFen1:
+	script4each "{ cutin \"FENRIR_A\",2; }",1,instance_mapname("1@glast");
+	end;
+OnFen2:
+	script4each "{ cutin \"FENRIR_B\",2; }",1,instance_mapname("1@glast");
+	end;
+OnSara1:
+	script4each "{ cutin \"SARAH_HERO3\",2; }",1,instance_mapname("1@glast");
+	end;
+OnSara2:
+	script4each "{ cutin \"SARAH_HERO3_2\",2; }",1,instance_mapname("1@glast");
+	end;
+OnClear:
+	script4each "{ cutin \"\",255; }",1,instance_mapname("1@glast");
+	end;
+}	
+	
+1@glast,352,279,0	script	#snfwarp1choice	WARPNPC,2,2,{
+OnTouch:
+	mes "要追上芬裡爾嗎？";
+	next;
+	switch(select((checkquest(9338)==2)?"^0000FF迅速追上^000000":"","^FF0000慢慢過去^000000")) {
+			case 1:
+			mes "你迅速追上了芬裡爾。";
+			'SnfProgress = 2;
+			close2;
+			donpcevent instance_npcname("芬裡爾#snf2b") + "::OnEnable";
+			warp instance_mapname("1@glast"),49,262;
+			break;
+		case 2:
+			close2;
+			warp instance_mapname("1@glast"),352,269;
+			break;
+	}
+	disablenpc instance_npcname("#snfwarp1choice");
+	enablenpc instance_npcname("#snfwarp1");
+	end;
+OnInstanceInit:
+	disablenpc instance_npcname("#snfwarp1choice");
+	end;
+}
+
+1@glast,352,279,0	script	#snfwarp1	WARPNPC,2,2,{
+	if('SnfProgress > 1) {
+		if('SnfProgress > 4) {
+			if(checkquest(9335) > -1) changequest 9335,9337;
+		}
+		warp instance_mapname("1@glast"),49,262;
+	}else
+		warp instance_mapname("1@glast"),352,269;	
+	end;
+OnInstanceInit:
+	disablenpc instance_npcname("#snfwarp1");
+	end;
+}
+
+1@glast,352,264,0	script	#snfmarker	HIDDEN_WARP_NPC,6,6,{
+	viewpoint 1,216,52,1,0xFF0000;
+	end;
+}
+
+
+1@glast,294,146,5	script	遺跡巨人族#snf1	3194,6,6,{
+	end;
+OnTouch:
+	getmapxy(.@map$,.@x,.@y,BL_NPC);
+	monster .@map$,.@x,.@y,"巨人族首領",3193,1;
+	areamonster .@map$,.@x-2,.@y-2,.@x+2,.@y+2, "巨人族", 3191,2;
+	disablenpc instance_npcname(strnpcinfo(0));
+	end;
+OnInstanceInit:
+	disablenpc instance_npcname(strnpcinfo(0));
+	end;
+}
+1@glast,302,249,5	duplicate(遺跡巨人族#snf1)	遺跡巨人族#snf2	3194,6,6
+1@glast,294,344,5	duplicate(遺跡巨人族#snf1)	遺跡巨人族#snf3	3194,6,6
+1@glast,105,344,5	duplicate(遺跡巨人族#snf1)	遺跡巨人族#snf4	3194,6,6
+1@glast,98,249,5	duplicate(遺跡巨人族#snf1)	遺跡巨人族#snf5	3194,6,6
+1@glast,105,146,5	duplicate(遺跡巨人族#snf1)	遺跡巨人族#snf6	3194,6,6
+
+
+1@glast,216,52,5	script	芬裡爾#snf2a	4_F_FENRIR,{
+	if('SnfProgress > 2)
+		end;
+	'SnfProgress = 3;
+	disablenpc instance_npcname("#snfwarp1");
+	disablenpc instance_npcname("#snfmarker");
+	donpcevent instance_npcname("#cutinc")+"::OnFen1";
+	npctalk "芬裡爾：你還在這裡徘徊？很危險的，你還有什麼事嗎？";
+	sleep2 3000;
+	donpcevent instance_npcname("#cutinc")+"::OnClear";
+	unittalk getcharid(3), "我知道很危險，但覺得很有趣，不知不覺就...";
+	sleep2 3000;
+	donpcevent instance_npcname("#cutinc")+"::OnFen1";
+	npctalk "芬裡爾：這就是所謂的冒險家精神麼...";
+	sleep2 3000;
+	donpcevent instance_npcname("#cutinc")+"::OnClear";
+	unittalk getcharid(3), "不用擔心，我能保護好自己。";
+	sleep2 3000;
+	donpcevent instance_npcname("#cutinc")+"::OnFen1";
+	npctalk "芬裡爾：是嗎？看起來挺有餘力的樣子...那麼能幫助我嗎？";
+	sleep2 3000;
+	npctalk "芬裡爾：在這裡有我想要尋找的東西...";
+	sleep2 3000;
+	npctalk "芬裡爾：我能感受到它的力量，在11點方向。";
+	sleep2 3000;
+	npctalk "芬裡爾：我先走一步，5分鐘內在那匯合吧。";
+	sleep2 3000;
+	npctalk "芬裡爾：如果你來晚的話，我只能一個人先去了。";
+	sleep2 3000;
+	npctalk "芬裡爾：當然你可以自由選擇是否幫助我";
+	sleep2 3000;
+	npctalk "芬裡爾：那麼一會再見！";
+	sleep2 2000;
+	donpcevent instance_npcname("#cutinc")+"::OnClear";
+	donpcevent instance_npcname("#cutinc")+"::OnView1";
+	donpcevent instance_npcname("芬裡爾#snf2b")+"::OnEnable";
+	sleep2 1000;
+	unittalk getcharid(3), "怎麼辦呢？還要完成班哈德博士的委託...";
+	sleep2 3000;
+	unittalk getcharid(3), "是幫助她，還是先去搜集巨人的碎片？";
+	for(set .@i,1; .@i <= 6; set .@i,.@i+1)
+		enablenpc instance_npcname("遺跡巨人族#snf"+.@i);
+	end;
+}
+
+1@glast,40,350,4	script	#snfquest1	HIDDEN_WARP_NPC,2,2,{
+OnTouch:
+	if(checkquest(9335) > -1) changequest 9335,9337;
+	end;
+OnInstanceInit:
+	disablenpc instance_npcname("#snfquest1");
+	end;
+}
+
+1@glast,47,270,4	script	芬裡爾#snf2b	4_F_FENRIR,4,4,{
+OnTouch:
+	if('SnfProgress > 4)
+		end;
+	'SnfProgress = 5;
+	stopnpctimer;
+	donpcevent instance_npcname("#cutinc")+"::OnFen1";
+	npctalk "芬裡爾：來了麼？謝謝你們。";
+	sleep2 3000;
+	npctalk "芬裡爾：時間不多了，這邊走。";
+	sleep2 3000;
+	donpcevent instance_npcname("#cutinc")+"::OnClear";
+	enablenpc instance_npcname("#snfquest1");
+	mapwarp instance_mapname("1@glast"),instance_mapname("1@glast"),40,350;
+	donpcevent instance_npcname("巴爾姆#snf3") + "::OnEnable";
+	for(set .@i,1; .@i <= 6; set .@i,.@i+1)
+		disablenpc instance_npcname("遺跡巨人族#snf"+.@i);
+	disablenpc instance_npcname("#snfwarp1");
+	disablenpc instance_npcname("#snfmarker");
+OnInstanceInit:
+	disablenpc instance_npcname("芬裡爾#snf2b");
+	end;				
+OnEnable:
+	'SnfProgress = 4;
+	hideonnpc instance_npcname("芬裡爾#snf2a");
+	enablenpc instance_npcname("芬裡爾#snf2b");
+	initnpctimer;
+	end;
+OnTimer60000:
+	mapannounce instance_mapname("1@glast"),"與芬裡爾約定的時間還剩4分鐘！",bc_map,"0xFFFF00";
+	end;
+OnTimer120000:
+	mapannounce instance_mapname("1@glast"),"與芬裡爾約定的時間還剩3分鐘！",bc_map,"0xFFFF00";
+	end;
+OnTimer180000:
+	mapannounce instance_mapname("1@glast"),"與芬裡爾約定的時間還剩2分鐘！",bc_map,"0xFFFF00";
+	end;
+OnTimer240000:
+	mapannounce instance_mapname("1@glast"),"與芬裡爾約定的時間還剩1分鐘！",bc_map,"0xFFFF00";
+	end;	
+OnTimer300000:
+	stopnpctimer;
+	donpcevent instance_npcname("#snfpart1end")+"::OnEnd2";
+	end;
+}
+
+1@glast,44,366,0	script	巴爾姆#snf3	CLEAR_NPC,{
+	end;	
+OnEnable:
+	enablenpc instance_npcname("巴爾姆#snf3");
+	initnpctimer;
+	end;
+OnTimer10000:
+	stopnpctimer;
+	initnpctimer;
+	specialeffect 247;
+	specialeffect 710;
+	end;
+OnDisable:
+	stopnpctimer;
+	disablenpc instance_npcname("巴爾姆#snf3");
+	end;
+}
+
+1@glast,44,357,0	script	芬裡爾#snf3	4_F_FENRIR,{
+	if('SnfProgress > 5)
+		end;
+	mes "- 前方有一把古老的長劍，插在廢墟之中。";
+	mes "這就是芬裡爾在尋找的東西嗎？ -";
+	if(getcharid(0) != getpartyleader(getcharid(1),2)) {
+		mes "- 還是讓隊長來和她交談吧。 -";
+		close;
+	}
+	next;
+	switch(select((checkquest(9338)==2)?"^0000FF跳過對話^000000":"","^FF0000詢問芬裡爾^000000")) {
+			case 1:
+			mes "直接推進劇情。";
+			close2;
+			break;
+		case 2:
+			close2;
+			'SnfProgress = 6;
+			unittalk getcharid(3),"這就是你在尋找的東西麼？";
+			sleep2 3000;
+			donpcevent instance_npcname("#cutinc")+"::OnFen1";
+			npctalk "芬裡爾：神劍巴爾姆...近千年過去了，還是完好無損的在這裡...";
+			sleep2 3000;
+			npctalk "芬裡爾：接下來只要利用巴爾姆的力量，就能找到...";
+			sleep2 3000;
+			donpcevent instance_npcname("#cutinc")+"::OnFen2";
+			npctalk "芬裡爾：誰在那裡！？請出來吧！";
+			sleep2 3000;
+			hideoffnpc instance_npcname("莎拉#snf3");
+			specialeffect 16,AREA,instance_npcname("莎拉#snf3");
+			donpcevent instance_npcname("#cutinc")+"::OnSara1";
+			donpcevent instance_npcname("莎拉#snf3")+"::OnTalk";
+			sleep2 3000;
+			donpcevent instance_npcname("莎拉#snf3")+"::OnTalk1";
+			sleep2 3000;
+			donpcevent instance_npcname("莎拉#snf3")+"::OnTalk2";
+			sleep2 3000;
+			donpcevent instance_npcname("#cutinc")+"::OnFen2";
+			npctalk "芬裡爾：難道是...十二祭司嗎...";
+			sleep2 3000;
+			donpcevent instance_npcname("#cutinc")+"::OnSara1";
+			donpcevent instance_npcname("莎拉#snf3")+"::OnTalk3";
+			sleep2 4000;
+			donpcevent instance_npcname("莎拉#snf3")+"::OnTalk4";
+			sleep2 3000;
+			donpcevent instance_npcname("#cutinc")+"::OnSara2";
+			donpcevent instance_npcname("莎拉#snf3")+"::OnTalk5";
+			specialeffect 894,AREA,instance_npcname("莎拉#snf3");
+			sleep2 3000;
+			donpcevent instance_npcname("#cutinc")+"::OnClear";
+			disablenpc instance_npcname("巴爾姆#snf3");
+			hideonnpc instance_npcname("莎拉#snf3");
+			sleep2 2000;
+			npctalk "芬裡爾：劍被奪走了，追上她！";
+			sleep2 1000;
+			donpcevent instance_npcname("巴爾姆#snf3")+"::OnEnable";
+			break;
+	}
+	disablenpc instance_npcname("#snfquest1");
+	mapwarp instance_mapname("1@glast"),instance_mapname("1@glast"),199,333;
+	movenpc instance_npcname("巴爾姆#snf3"),200,350;
+	disablenpc instance_npcname("芬裡爾#snf3");
+	end;
+}
+
+1@glast,46,364,4	script	莎拉#snf3	4_F_SARAH,{
+	end;
+OnInstanceInit:
+	hideonnpc instance_npcname("莎拉#snf3");
+	end;
+OnTalk:
+	npctalk "莎拉：哈哈，果然不出我所料,你會找到這裡。";
+	end;
+OnTalk1:
+	npctalk "莎拉：這把劍就是關鍵道具麼？";
+	end;
+OnTalk2:
+	npctalk "莎拉：用它就可以解開千年的封印吧？芬裡爾！";
+	end;
+OnTalk3:
+	npctalk "莎拉：反正你就要死在這了，告訴你也無妨。";
+	end;
+OnTalk4:
+	npctalk "莎拉：我叫莎拉 艾琳，女神芙蕾亞的十二祭司之一。";
+	end;
+OnTalk5:
+	npctalk "莎拉：為了達成芙蕾亞大人的心願，這把劍我就收下了。";
+	end;
+}
+
+1@glast,202,337,1	script	巨人族#snf41	3194,{
+	end;
+OnInstanceInit:
+	hideonnpc instance_npcname("巨人族#snf41");
+	end;
+}
+
+1@glast,198,337,7	script	巨人族#snf42	3191,{
+	end;
+OnInstanceInit:
+	hideonnpc instance_npcname("巨人族#snf42");
+	end;
+}
+
+1@glast,200,340,0	script	芬裡爾#snf4	4_F_FENRIR,{
+	if('SnfProgress > 6)
+		end;
+	mes "- 芬裡爾與莎拉對峙中。 -";
+	if(getcharid(0) != getpartyleader(getcharid(1),2)) {
+		mes "- 還是讓隊長來和她交談吧。 -";
+		close;
+	}
+	next;
+	switch(select((checkquest(9338)==2)?"^0000FF跳過劇情^000000":"","^FF0000見證戰鬥^000000","再考慮一下")) {
+			case 1:
+			mes "直接推進劇情。";
+			'SnfProgress = 7;
+			close2;
+			donpcevent instance_npcname("巴爾姆#snf3") + "::OnDisable";
+			break;
+		case 2:
+			close2;
+			'SnfProgress = 7;
+			donpcevent instance_npcname("#cutinc")+"::OnSara1";
+			donpcevent instance_npcname("莎拉#snf4")+"::OnTalk";
+			sleep2 4000;
+			donpcevent instance_npcname("莎拉#snf4")+"::OnTalk1";
+			sleep2 3000;
+			hideoffnpc instance_npcname("巨人族#snf41");
+			specialeffect 16,AREA,instance_npcname("巨人族#snf41");
+			hideoffnpc instance_npcname("巨人族#snf42");
+			specialeffect 16,AREA,instance_npcname("巨人族#snf42");
+			donpcevent instance_npcname("#cutinc")+"::OnFen2";				
+			npctalk "芬裡爾：後面麼！？";
+			sleep2 2000;
+			npctalk "芬裡爾：以吾等之血召喚，炎之精靈！";
+			specialeffect 220;
+			sleep2 3000;
+			npctalk "芬裡爾：現身吧！毀滅之盾！";
+			donpcevent instance_npcname("#snf4Eff1")+"::OnEffect1";
+			for(set .@i,0; .@i < 4; set .@i,.@i+1) {
+				sleep2 500;
+				specialeffect 255,AREA,instance_npcname("巨人族#snf41");
+				specialeffect 255,AREA,instance_npcname("巨人族#snf42");
+			}
+			disablenpc instance_npcname("巨人族#snf41");
+			disablenpc instance_npcname("巨人族#snf42");
+			sleep2 1000;
+			disablenpc instance_npcname("#snf4Eff1");
+			sleep2 1000;
+			donpcevent instance_npcname("#cutinc")+"::OnSara1";
+			donpcevent instance_npcname("莎拉#snf4")+"::OnTalk2";
+			sleep2 4000;
+			donpcevent instance_npcname("#cutinc")+"::OnFen2";				
+			npctalk "芬裡爾：呵呵，不要小瞧我！";
+			sleep2 3000;
+			donpcevent instance_npcname("莎拉#snf42") + "::OnFight";
+			donpcevent instance_npcname("#cutinc")+"::OnSara2";				
+			donpcevent instance_npcname("莎拉#snf42")+"::OnTalk";
+			sleep2 4000;
+			donpcevent instance_npcname("#cutinc")+"::OnClear";
+			npctalk "芬裡爾：掌管火焰的炎神...我名為芬裡斯 芬裡爾。";
+			sleep2 1000;
+			donpcevent instance_npcname("#cutinc")+"::OnClear";
+			donpcevent instance_npcname("莎拉#snf42")+"::OnTalk1";
+			sleep2 1000;
+			specialeffect 903;
+			specialeffect 831,AREA,instance_npcname("莎拉#snf4");
+			sleep2 3000;
+			donpcevent instance_npcname("莎拉#snf42")+"::OnTalk2";
+			donpcevent instance_npcname("#snf4Eff1") + "::OnEffect2";
+			sleep2 1000;
+			specialeffect 886;
+			sleep2 1000;
+			npctalk "芬裡爾：靈魂燃盡的永恆業火！";
+			donpcevent instance_npcname("#snf4Eff2") + "::OnEffect1";
+			sleep2 1000;
+			donpcevent instance_npcname("莎拉#snf42")+"::OnTalk3";
+ 			sleep2 2000;
+			donpcevent instance_npcname("莎拉#snf42")+"::OnTalk4";
+			donpcevent instance_npcname("#cutinc")+"::OnFen2";				
+			npctalk "芬裡爾：就是現在！";
+			specialeffect 16;
+			movenpc instance_npcname("芬裡爾#snf4"),198,350,4;
+			sleep2 2000;
+			npctalk "芬裡爾：巴爾姆神劍入手了！";
+			donpcevent instance_npcname("巴爾姆#snf3") + "::OnDisable";
+			sleep2 1000;
+			donpcevent instance_npcname("#cutinc")+"::OnSara2";			
+			donpcevent instance_npcname("莎拉#snf42")+"::OnTalk5";
+			sleep2 2000;
+			donpcevent instance_npcname("莎拉#snf42")+"::OnTalk6";
+			specialeffect 805,AREA,instance_npcname("莎拉#snf42");
+			sleep2 1000;
+			donpcevent instance_npcname("莎拉#snf4") + "::OnEffect1";
+			for(set .@i,0; .@i < 5; set .@i,.@i+1) {
+				sleep2 1000;
+				specialeffect 804,AREA,instance_npcname("莎拉#snf42");
+			}
+			sleep2 1000;
+			specialeffect 886,AREA,instance_npcname("莎拉#snf42");
+			specialeffect 894,AREA,instance_npcname("莎拉#snf42");
+			disablenpc instance_npcname("#snf4Eff2");
+			disablenpc instance_npcname("莎拉#snf4");
+			sleep2 2000;
+			donpcevent instance_npcname("#cutinc")+"::OnFen1";
+			npctalk "芬裡爾：劍拿到手了...我們撤退吧！";
+			sleep2 3000;
+			donpcevent instance_npcname("#cutinc")+"::OnSara2";				
+			donpcevent instance_npcname("莎拉#snf42")+"::OnTalk7";
+			sleep2 3000;
+			donpcevent instance_npcname("#cutinc")+"::OnClear";				
+			npctalk "芬裡爾：風之精靈！";
+			sleep2 1000;
+			specialeffect 460;
+			specialeffect2 460;
+			sleep2 1000;				
+			break;
+		case 3:
+			close;
+	}
+	'partyid = getcharid(1);
+	mapwarp instance_mapname("1@glast"),instance_mapname("1@glast"),200,204;
+	donpcevent instance_npcname("#snfescape") + "::OnStart";
+	donpcevent instance_npcname("#sarahescape") + "::OnStart";
+	disablenpc instance_npcname("芬裡爾#snf4");
+	disablenpc instance_npcname("莎拉#snf42");
+	disablenpc instance_npcname("莎拉#snf4");
+	end;
+}
+
+1@glast,1,1,0	script	#sarahescape	HIDDEN_WARP_NPC,{
+	end;
+OnStart:
+	enablenpc instance_npcname("#sarahescape");
+	sleep rand(1,3)*1000;
+	initnpctimer;
+	end;	
+OnTimer12000:
+	sleep rand(1,3)*1000;
+	stopnpctimer;
+	initnpctimer;
+	.@map$ = instance_mapname("1@glast");
+	getpartymember('partyid,2);
+	copyarray .@partyrid[0],$@partymemberaid[0],$@partymembercount;
+	.@count = $@partymembercount;
+	.@ismember = 0;
+	for(set .@i,0; .@i < .@count; set .@i,.@i+1) {
+		if(!isloggedin(.@partyrid[.@i]))
+			continue;
+		attachrid .@partyrid[.@i];
+		getmapxy(.@map2$,.@x,.@y,BL_PC);
+		if(.@map$ == .@map2$) {
+			.@ismember = 1;
+			break;
+		}
+	}
+	if(!.@ismember) 
+		end;
+	sleep 1000;
+	switch(rand(1,6)) {
+			case 1:	mapannounce instance_mapname("1@glast"),"莎拉: 啊哈哈哈！真的以為能從我這逃出去麼？",bc_map,"0x00FFFF"; break;
+		case 2:	mapannounce instance_mapname("1@glast"),"莎拉: 再怎麼逃竄都是沒用的哦。整座古城我都毀滅給你們看！",bc_map,"0x00FFFF"; break;
+		case 3:	mapannounce instance_mapname("1@glast"),"莎拉: 為你們的魯莽而後悔吧！",bc_map,"0x00FFFF"; break;
+		case 4:	mapannounce instance_mapname("1@glast"),"莎拉: 在~哪~裡~呢~",bc_map,"0x00FFFF"; break;
+		case 5:	mapannounce instance_mapname("1@glast"),"莎拉: 讓你見識一下真正的魔法！",bc_map,"0x00FFFF"; break;
+		case 6:	mapannounce instance_mapname("1@glast"),"莎拉: 所有的東西~全部破壞！",bc_map,"0x00FFFF"; break;
+	}
+	movenpc instance_npcname("#sarahescape"),.@x,.@y;
+	specialeffect 304;
+	specialeffect 688;
+	sleep 500;
+	monster (.@map$,.@x,.@y,"--ja--",3190,1);
+	.@skillunit = $@mobid[0];
+	getunitdata .@skillunit,.@glastmobdata;
+	setunitdata .@skillunit,UMOB_MATKMAX,.@glastmobdata[UMOB_MATKMAX]*749/1000;
+	setunitdata .@skillunit,UMOB_MODE,0;
+	unitskilluseid .@skillunit, 685, 1;//685 NPC_INVINCIBLE
+	unittalk .@skillunit,"瞬間移動！";
+	specialeffect 135;
+	sleep 1000;
+	for(set .@i,0; .@i < 8; set .@i,.@i+1)
+		unitskillusepos .@skillunit,83,11,.@x-4+rand(9),.@y-4+rand(9),-10;
+	sleep 5000;
+	mobremove .@skillunit;
+	end;	
+OnEnd:
+	stopnpctimer;
+OnInstanceInit:
+	disablenpc instance_npcname("#sarahescape");
+	end;
+}
+
+1@glast,200,340,0	script	#snf4Eff1	HIDDEN_WARP_NPC,{
+	end;
+OnEffect1:
+	enablenpc instance_npcname("#snf4Eff1");
+	specialeffect 929;
+	end;
+OnEffect2:
+	enablenpc instance_npcname("#snf4Eff1");
+	specialeffect 622;
+	end;
+}
+
+1@glast,200,346,0	script	#snf4Eff2	HIDDEN_WARP_NPC,{
+	end;
+OnEffect1:
+	enablenpc instance_npcname("#snf4Eff1");
+	specialeffect 916;
+	end;
+}
+
+1@glast,200,346,4	script	莎拉#snf4	4_F_SARAH,{
+	end;
+OnEffect1:
+	specialeffect 651;
+	end;
+OnTalk:
+	npctalk "莎拉：果然追上來了麼，芬裡斯 芬裡爾。";
+	end;
+OnTalk1:
+	npctalk "莎拉：真是煩人...那就送你們去地獄吧！";
+	end;
+OnTalk2:
+	npctalk "莎拉：召喚火之精靈還要耗費這麼多血，看來你的血真不值錢啊。";
+	end;
+}
+
+1@glast,200,346,4	script	莎拉#snf42	3190,{
+	end;
+OnFight:
+	hideonnpc instance_npcname("莎拉#snf4");
+	hideoffnpc instance_npcname("莎拉#snf42");
+	end;
+OnInstanceInit:
+	hideonnpc instance_npcname("莎拉#snf42");
+	end;
+OnTalk:	
+	npctalk "莎拉：...好吧，那我就將你的自信，連同你的身體，一起粉碎成灰燼吧！";
+	end;
+OnTalk1:
+	npctalk "莎拉：撕裂天地的極限之力，集結於我雙手之上！";
+	end;
+OnTalk2:
+	npctalk "莎拉：劃破空間，斬裂時間，天空之劍...";
+	end;
+OnTalk3:
+	npctalk "莎拉：呃...";
+	end;
+OnTalk4:
+	npctalk "莎拉：怎麼會...";
+	end;
+OnTalk5:
+	npctalk "莎拉：我真的生氣了！";
+	end;
+OnTalk6:
+	npctalk "莎拉：哈啊啊啊啊啊啊...";
+	end;
+OnTalk7:
+	npctalk "莎拉：你覺得你們能就此逃脫麼！？";
+	end;
+}
+
+1@glast,1,1,0	script	#snfescape	CLEAR_NPC,{
+	end;
+OnStart:
+	initnpctimer;
+	end;	
+OnTimer1500:
+	donpcevent instance_npcname("#snfBGM")+"::OnEscape";
+	.@map$ = instance_mapname("1@glast");
+	mapannounce .@map$,"芬裡爾: 對不起，力量只夠把你們送到這裡了，我們在遺跡入口匯合吧！",bc_map,"0x00FFFF";
+	donpcevent instance_npcname("#cutinc")+"::OnView2";
+	for(set .@i,1; .@i <= 5; set .@i,.@i+1) {
+		enablenpc instance_npcname("秘寶#snf"+.@i);
+		enablenpc instance_npcname("巨人族首領#snf"+.@i);
+		if(.@i <= 4) {
+			enablenpc instance_npcname("#snftrap"+.@i);
+			enablenpc instance_npcname("莎拉的幻影#snf"+.@i);
+			switch(rand(1,4)) {
+					case 1:
+					enablenpc instance_npcname("秘寶#snfr"+.@i);
+					break;
+				case 2:
+				case 3:
+					enablenpc instance_npcname("巨人族首領#snfr"+.@i);
+					break;
+				case 4:
+					break;
+			}
+		}
+	}
+	enablenpc instance_npcname("#snfwarp2");
+	end;	
+OnTimer5000:
+	mapannounce instance_mapname("1@glast"),"莎拉: 你們是逃不出去的，在我真正的力量前恐懼吧！",bc_map,"0x00FFFF";
+	end;	
+OnTimer8000:
+	mapannounce instance_mapname("1@glast"),"受莎拉的魔力影響，莎拉的幻影，巨人族首領，秘密寶箱出現在地圖上！",bc_map,"0xFFFF00";
+	end;		
+OnTimer19000:
+	mapannounce instance_mapname("1@glast"),"莎拉: 就像老鼠一樣到處逃竄吧！我要把你們挫骨揚灰！",bc_map,"0x00FFFF";
+	end;	
+OnTimer22000:
+	mapannounce instance_mapname("1@glast"),"芬裡爾: 吱~吱~ 莎拉，這下滿足了吧。",bc_map,"0x00FFFF";
+	end;
+OnTimer25000:
+	mapannounce instance_mapname("1@glast"),"莎拉: 芬裡爾！我要用這雙手親自埋葬你。",bc_map,"0x00FFFF";
+	end;
+OnTimer60000:
+	mapannounce instance_mapname("1@glast"),"距離逃跑時限還剩4分鐘！",bc_map,"0xFFFF00";
+	end;
+OnTimer120000:
+	mapannounce instance_mapname("1@glast"),"距離逃跑時限還剩3分鐘！",bc_map,"0xFFFF00";
+	end;
+OnTimer180000:
+	mapannounce instance_mapname("1@glast"),"距離逃跑時限還剩2分鐘！",bc_map,"0xFFFF00";
+	end;
+OnTimer240000:
+	mapannounce instance_mapname("1@glast"),"距離逃跑時限還剩1分鐘！",bc_map,"0xFFFF00";
+	end;
+OnTimer300000:
+	stopnpctimer;
+	donpcevent instance_npcname("#snfpart1end")+"::OnEnd";
+	end;		
+OnEnd:
+	stopnpctimer;
+	donpcevent instance_npcname("#snfBGM")+"::OnDisable";
+	mapannounce instance_mapname("1@glast"),"莎拉的幻影，巨人族首領，秘密寶箱都消失了！",bc_map,"0xFFFF00";
+	donpcevent instance_npcname("#sarahescape") + "::OnEnd";
+	for(set .@i,1; .@i <= 5; set .@i,.@i+1) {
+		disablenpc instance_npcname("秘寶#snf"+.@i);
+		disablenpc instance_npcname("巨人族首領#snf"+.@i);
+		if(.@i <= 4) {
+			disablenpc instance_npcname("秘寶#snfr"+.@i);
+			disablenpc instance_npcname("巨人族首領#snfr"+.@i);
+			disablenpc instance_npcname("#snftrap"+.@i);
+			donpcevent instance_npcname("莎拉的幻影#snf"+.@i)+"::OnDisable";
+		}
+	}
+	end;
+}
+
+// Fixed Chest
+1@glast,176,179,4	script	秘寶#snf1	4_TREASURE_BOX,{
+	setarray .@gain,912,719,723,730,730,730,7228,7229,7229,6803,15121;
+	setarray .@rate,900,800,800,500,300,200, 300, 500, 200, 100,   10;
+	getmapxy(.@map$,.@x,.@y,BL_NPC,instance_npcname(strnpcinfo(0)));
+	specialeffect 10; //55462
+	hideonnpc instance_npcname(strnpcinfo(0)); //55462
+	for(set .@i,0; .@i<getarraysize(.@gain); set .@i,.@i+1) {
+		if(rand(1000) < .@rate[.@i])
+			makeitem .@gain[.@i],1,.@map$,.@x+rand(3)-1,.@y+rand(3)-1;
+	}
+	end;
+OnInstanceInit:
+	disablenpc instance_npcname(strnpcinfo(0));
+	end;
+}
+
+1@glast,62,279,0	duplicate(秘寶#snf1)	秘寶#snf2	4_TREASURE_BOX
+1@glast,200,135,4	duplicate(秘寶#snf1)	秘寶#snf3	4_TREASURE_BOX
+1@glast,97,38,4	duplicate(秘寶#snf1)	秘寶#snf4	4_TREASURE_BOX
+1@glast,267,351,0	duplicate(秘寶#snf1)	秘寶#snf5	4_TREASURE_BOX
+
+
+// Fixed Gigan
+1@glast,82,109,1	script	巨人族首領#snf1	3194,6,6,{
+	end;
+OnTouch:
+	getmapxy(.@map$,.@x,.@y,BL_NPC,instance_npcname(strnpcinfo(0)));
+	monster .@map$,.@x,.@y,"巨人族首領",3196,1;
+	disablenpc instance_npcname(strnpcinfo(0));
+	end;
+OnInstanceInit:
+	disablenpc instance_npcname(strnpcinfo(0));
+	end;
+}
+1@glast,332,61,5	duplicate(巨人族首領#snf1)	巨人族首領#snf2	3194,6,6
+1@glast,307,297,5	duplicate(巨人族首領#snf1)	巨人族首領#snf3	3194,6,6
+1@glast,246,183,5	duplicate(巨人族首領#snf1)	巨人族首領#snf4	3194,6,6
+1@glast,298,85,5	duplicate(巨人族首領#snf1)	巨人族首領#snf5	3194,6,6
+
+
+//Random Spawn
+1@glast,67,264,5	duplicate(巨人族首領#snf1)	巨人族首領#snfr1	3194,6,6
+1@glast,67,264,4	duplicate(秘寶#snf1)	秘寶#snfr1	4_TREASURE_BOX
+1@glast,133,361,5	duplicate(巨人族首領#snf1)	巨人族首領#snfr2	3194,6,6
+1@glast,133,361,4	duplicate(秘寶#snf1)	秘寶#snfr2	4_TREASURE_BOX
+1@glast,366,190,5	duplicate(巨人族首領#snf1)	巨人族首領#snfr3	3194,6,6
+1@glast,366,190,4	duplicate(秘寶#snf1)	秘寶#snfr3	4_TREASURE_BOX
+1@glast,298,198,5	duplicate(巨人族首領#snf1)	巨人族首領#snfr4	3194,6,6
+1@glast,298,198,4	duplicate(秘寶#snf1)	秘寶#snfr4	4_TREASURE_BOX
+
+//Gargoyle Statue
+1@glast,230,51,3	script	石像#snf1	4_GARGOYLE_STATUE,{}
+1@glast,230,44,3	script	石像#snf2	4_GARGOYLE_STATUE,{}
+1@glast,235,51,3	script	石像#snf3	4_GARGOYLE_STATUE,{}
+1@glast,235,44,3	script	石像#snf4	4_GARGOYLE_STATUE,{}
+1@glast,240,51,3	script	石像#snf5	4_GARGOYLE_STATUE,{}
+1@glast,240,44,3	script	石像#snf6	4_GARGOYLE_STATUE,{}
+1@glast,245,51,3	script	石像#snf7	4_GARGOYLE_STATUE,{}
+1@glast,245,44,3	script	石像#snf8	4_GARGOYLE_STATUE,{}
+
+1@glast,237,43,0	script	#snftrap1	HIDDEN_WARP_NPC,1,8,{
+OnTouch:
+	disablenpc instance_npcname("#snftrap1");
+	donpcevent instance_npcname("#snftrap1act") + "::OnActivate";
+	end;
+		
+OnInstanceInit:
+	disablenpc instance_npcname("#snftrap1");
+	end;
+}
+
+1@glast,1,1,0	script	#snftrap1act	CLEAR_NPC,{
+	end;
+OnActivate:
+	setarray .@x[0],230,230,235,235,240,240,245,245;
+	setarray .@y[0],51,44,51,44,51,44,51,44;
+	.@map$ = instance_mapname("1@glast");
+	for(set .@i,1; .@i <= 8; set .@i,.@i+1) {
+		hideonnpc instance_npcname("石像#snf"+.@i);
+		monster .@map$,.@x[.@i-1],.@y[.@i-1],"--ja--",3197,1;
+	}
+	end;
+}
+
+1@glast,268,131,0	script	#snftrap2	HIDDEN_WARP_NPC,6,1,{
+OnTouch:
+	disablenpc instance_npcname("#snftrap2");
+	for(set .@i,0; .@i < 5; set .@i,.@i+1)
+		monster instance_mapname("1@glast"),264+rand(9),118+rand(9),"--ja--",3194,rand(1,2);
+	end;
+		
+OnInstanceInit:
+	disablenpc instance_npcname("#snftrap2");
+	end;
+}
+
+
+1@glast,131,131,0	script	#snftrap3	HIDDEN_WARP_NPC,6,1,{
+OnTouch:
+	disablenpc instance_npcname("#snftrap3");
+	for(set .@i,0; .@i < 5; set .@i,.@i+1)
+		monster instance_mapname("1@glast"),127+rand(9),118+rand(9),"--ja--",3194,rand(1,2);
+	end;
+		
+OnInstanceInit:
+	disablenpc instance_npcname("#snftrap3");
+	end;
+}
+
+
+1@glast,360,196,0	script	#snftrap4	HIDDEN_WARP_NPC,15,1,{
+OnTouch:
+	disablenpc instance_npcname("#snftrap4");
+	for(set .@i,0; .@i < 5; set .@i,.@i+1)
+		monster instance_mapname("1@glast"),347+rand(9),204+rand(9),"--ja--",3194,rand(1,2);
+	end;
+		
+OnInstanceInit:
+	disablenpc instance_npcname("#snftrap4");
+	end;
+}
+
+//TODO！！
+1@glast,298,211,5	script	莎拉的幻影#snf1	3190,6,6,{
+	end;
+OnTouch:
+	initnpctimer;
+	disablenpc instance_npcname(strnpcinfo(0));
+	getmapxy(.@map$,.@x,.@y,BL_NPC);
+	monster (.@map$,.@x,.@y,"--ja--",3190,1);
+	.@skillunit = $@mobid[0];
+	getunitdata .@skillunit,.@glastmobdata;
+	setunitdata .@skillunit,UMOB_MATKMAX,.@glastmobdata[UMOB_MATKMAX]*749/1000;
+	monster (.@map$,.@x,.@y-8,"--ja--",3190,1);
+	.@skillunit2 = $@mobid[0];
+	getunitdata .@skillunit2,.@glastmobdata;
+	setunitdata .@skillunit2,UMOB_MATKMAX,.@glastmobdata[UMOB_MATKMAX]*749/1000;
+//	specialeffect3 16,.@skillunit;
+	setunitdata .@skillunit,UMOB_MODE,0;
+	unitskilluseid .@skillunit, 685, 1;//685 NPC_INVINCIBLE
+	setunitdata .@skillunit2,UMOB_MODE,0;
+	unitskilluseid .@skillunit2, 685, 1;//685 NPC_INVINCIBLE
+
+	unitskilluseid .@skillunit2, 353, 1;
+	sleep 1000;
+	switch(rand(1,2)) {
+			case 1:
+			unitskillusepos .@skillunit,2216,1,.@x,.@y-2,-3;
+			sleep 500;
+			unitskillusepos .@skillunit2,2216,1,.@x,.@y-10,-3;
+			break;
+		case 2:
+			unitskillusepos .@skillunit,83,11,.@x+1,.@y+1,-10;
+			unitskillusepos .@skillunit2,83,11,.@x-1,.@y-1,-10;
+			break;
+	}
+	sleep 3000;
+//	specialeffect3 16,.@skillunit;
+	sleep 1000;
+	mobremove .@skillunit;
+	mobremove .@skillunit2;
+	end;		
+OnTimer15000:
+	stopnpctimer;
+	enablenpc instance_npcname(strnpcinfo(0));
+	end;	
+OnDisable:
+	stopnpctimer;
+OnInstanceInit:
+	disablenpc instance_npcname(strnpcinfo(0));
+	end;
+}
+
+1@glast,321,250,5	duplicate(莎拉的幻影#snf1)	莎拉的幻影#snf2	3190,6,6
+1@glast,357,205,5	duplicate(莎拉的幻影#snf1)	莎拉的幻影#snf3	3190,6,6
+1@glast,351,259,5	duplicate(莎拉的幻影#snf1)	莎拉的幻影#snf4	3190,6,6
+
+
+1@glast,351,269,0	script	#snfwarp2	WARPNPC,2,2,{
+OnTouch:
+	mes "使用這個傳送點的話，";
+	mes "^FF0000全體小隊成員將會被傳送^000000。";
+	mes "繼續嗎？";
+	next;
+	if(select("傳送","取消") == 2) 
+		close;
+	close2;
+	if('SnfProgress < 8)
+		donpcevent instance_npcname("莎拉#snf5") + "::OnStart";
+	mapwarp instance_mapname("1@glast"),instance_mapname("1@glast"),352,283;
+	//enablenpc instance_npcname("#snfexit");
+OnInstanceInit:
+	disablenpc instance_npcname("#snfwarp2");
+	end;
+}
+
+1@glast,359,294,4	script	芬裡爾#snf5	4_F_FENRIR,{
+
+	
+
+	if('SnfProgress > 9) {
+		if(checkquest(9337) > -1) {
+			donpcevent instance_npcname("#cutinc")+"::OnFen1";
+			mes "[芬裡爾]";
+			mes "你們沒事真是太好了！";
+			mes "都是因為我的力量不足，導致你們陷入這樣的危險之中...";
+			next;
+			mes "[芬裡爾]";
+			mes "話說回來，";
+			mes "你們還真是快呢。";
+			next;
+			mes "[芬裡爾]";
+			mes "那麼，我也要走了。";
+			mes "這次能夠幫助我，真是太感謝了。";
+			next;
+			mes "[芬裡爾]";
+			mes "看樣子剛剛莎拉召喚出的幻影和使魔還殘留著。";
+			mes "就這樣放著不管的話，可能會危及到其他的冒險者。";
+			next;
+			mes "[芬裡爾]";
+			mes "萬幸的是莎拉本人不在了。";
+			mes "只是幻影的話，相信你們也能輕鬆對付的。";
+			mes "可以拜託你們消滅莎拉的幻影嗎？";
+			next;
+			mes "[芬裡爾]";
+			mes "我還有很重要的事情，必須先走了。";
+			mes "如果你們願意幫助消滅幻影的話，";
+			mes "可以通過南邊的傳送口出去。";
+			next;
+			mes "[芬裡爾]";
+			mes "當然，我不會強求你們。";
+			mes "如果就這樣回去的話，也是沒有任何問題的。";
+			next;
+			mes "[芬裡爾]";
+			mes "這裡是你們幫助我的一點謝禮。";
+			mes "請你收下。";
+			close2;
+			donpcevent instance_npcname("#cutinc")+"::OnClear";
+			getitem 607,3;
+			getitem 6803,1;
+			erasequest 9337;
+			if(checkquest(9338) == -1) setquest 9338;
+//			if(checkquest(40027) > -1) completequest 40027;
+			end;
+		} 
+		else if(checkquest(9338) > -1) {
+			donpcevent instance_npcname("#cutinc")+"::OnFen1";
+			mes "[芬裡爾]";
+			mes "我還有很重要的事情，必須先走了。";
+			mes "如果你們願意幫助消滅幻影的話，";
+			mes "可以通過南邊的傳送口出去。";
+			close2;
+			donpcevent instance_npcname("#cutinc")+"::OnClear";
+			end;
+		}
+		else {//should never be here
+			donpcevent instance_npcname("#cutinc")+"::OnFen1";
+			mes "[芬裡爾]";
+			mes "你們沒事真是太好了！";
+			close2;
+			donpcevent instance_npcname("#cutinc")+"::OnClear";
+			end;		
+		}
+	}
+	else {
+		if(checkquest(9337) > -1) {
+			donpcevent instance_npcname("#cutinc")+"::OnFen1";
+			mes "[芬裡爾]";
+			mes "你們沒事真是太好了！";
+			next;
+			mes "[芬裡爾]";
+			mes "我已經取得了巴爾姆神劍。";
+			mes "莎拉也離開了。";
+			next;
+			mes "[芬裡爾]";
+			mes "你們也趕快離開這個危險的地方吧。";
+			close2;
+			donpcevent instance_npcname("#cutinc")+"::OnClear";
+//			if(checkquest(40027) > -1) completequest 40027;
+			erasequest 9337;
+			end;
+			} 
+		else {//should never be here
+			donpcevent instance_npcname("#cutinc")+"::OnFen1";
+			mes "[芬裡爾]";
+			mes "你們也趕快離開這個危險的地方吧。";
+			close2;
+			donpcevent instance_npcname("#cutinc")+"::OnClear";
+			end;		
+		}
+	}
+OnInstanceInit:
+	disablenpc instance_npcname("芬裡爾#snf5");
+	end;
+OnTalk:	
+	npctalk "芬裡爾：可以的話，我希望今天就是最後的了結。";
+	end;
+OnTalk1:
+	npctalk "芬裡爾：是嗎？那我就期待著再會了。";
+	end;
+}
+
+1@glast,353,290,7	script	莎拉#snf5	4_F_SARAH,{
+	end;
+OnStart:
+	'SnfProgress = 10;		
+	donpcevent instance_npcname("#snfescape")+"::OnEnd";
+	enablenpc instance_npcname("芬裡爾#snf5");
+	enablenpc instance_npcname("莎拉#snf5");
+	initnpctimer;
+	end;	
+OnTimer3000:
+	npctalk "莎拉：真不錯嘛，芬裡爾，居然一路逃到了這裡。";
+	.@map$ = instance_mapname("1@glast");
+	getpartymember('partyid,2);
+	copyarray .@partyrid[0],$@partymemberaid[0],$@partymembercount;
+	.@count = $@partymembercount;
+	.@ismember = 0;
+	for(set .@i,0; .@i < .@count; set .@i,.@i+1) {
+		if(!isloggedin(.@partyrid[.@i]))
+			continue;
+		attachrid .@partyrid[.@i];
+		getmapxy(.@map2$,.@x,.@y, BL_PC);
+		if(.@map$ == .@map2$) {
+			.@ismember = 1;
+			break;
+		}
+	}
+	if(!.@ismember) 
+		end;
+	donpcevent instance_npcname("#cutinc")+"::OnSara1";
+	end;		
+OnTimer6000:
+	npctalk "莎拉：呵呵...今天就到此為止算了。";
+	end;		
+OnTimer9000:
+	donpcevent instance_npcname("芬裡爾#snf5")+"::OnTalk";
+	donpcevent instance_npcname("#cutinc")+"::OnFen1";
+	end;		
+OnTimer12000:
+	npctalk "莎拉：真可惜，我可不能就此放過你。";
+	donpcevent instance_npcname("#cutinc")+"::OnSara1";
+	end;		
+OnTimer15000:
+	npctalk "莎拉：準備好下次再見吧！";
+	specialeffect 561;
+	end;	
+OnTimer18000:
+	donpcevent instance_npcname("芬裡爾#snf5")+"::OnTalk1";
+	donpcevent instance_npcname("#cutinc")+"::OnFen1";
+	end;	
+OnTimer20000:
+	stopnpctimer;
+	hideonnpc instance_npcname("莎拉#snf5");
+	enablenpc instance_npcname("莎拉的幻影#snffinal");
+	donpcevent instance_npcname("#snfwarp3") + "::OnEnable";
+	.@map$ = instance_mapname("1@glast");
+	setarray .@x[0],213,214,185,184;
+	setarray .@y[0],333,331,329,327;
+	for(set .@i,0; .@i < 4; set .@i,.@i+1) {
+		for(set .@j,0; .@j < 4; set .@j,.@j+1) {
+			monster .@map$,.@x[.@i],.@y[.@j],"--ja--",3194,1;
+		}		
+	}
+	donpcevent instance_npcname("#cutinc")+"::OnClear";
+	end;		
+OnInstanceInit:
+	disablenpc instance_npcname("莎拉#snf5");
+	end;
+}
+
+1@glast,352,279,0	script	#snfwarp3	HIDDEN_WARP_NPC,2,2,{
+	mes "要前往莎拉的幻影所在地麼？";
+	next;
+	if(select("^0000FF留在這裡^000000","^FF0000傳送^000000") == 1) 
+		close;
+	mes "傳送至莎拉的幻影所在地。";
+	close2;
+	warp instance_mapname("1@glast"),199,333;
+	end;
+OnEnable:
+	enablenpc instance_npcname("#snfwarp3");
+OnTimer5000:
+	stopnpctimer;
+	specialeffect 341;
+	initnpctimer;
+	end;		
+OnDisable:
+	stopnpctimer;
+OnInstanceInit:
+	disablenpc instance_npcname("#snfwarp3");
+	end;		
+}
+
+1@glast,0,0,0	script	#saramatk	-1,{
+	end;
+OnStart:
+	enablenpc instance_npcname("#saramatk");
+	initnpctimer;
+	end;
+OnTimer1000:
+	setunitdata 'BossID,UMOB_MATKMAX,'glastbossdata[UMOB_MATKMAX]*749/1000;
+	stopnpctimer;
+	initnpctimer;
+	end;
+OnEnd:
+	stopnpctimer;
+OnInstanceInit:
+	disablenpc instance_npcname("#saramatk");
+	end;
+}
+
+1@glast,200,346,4	script	莎拉的幻影#snffinal	4_F_SARAH,{
+	if(getcharid(0) != getpartyleader(getcharid(1),2)) {
+		mes "- 請等待隊長選擇開始戰鬥。 -";
+		close;
+	}
+	mes "- 莎拉的幻影還在此處徘徊。 -";
+	mes "要開始戰鬥麼？";
+	next;
+	if(select("開始戰鬥","再等一會") == 2) {
+		close;
+	}
+	mes "- 開始莎拉的幻影討伐戰。 -";
+	close2;
+	donpcevent instance_npcname("#snffinal")+"::OnStart";
+	end;
+OnInstanceInit:
+	disablenpc instance_npcname("莎拉的幻影#snffinal");
+	end;
+}
+
+1@glast,1,1,0	script	#snfpart1end	CLEAR_NPC,{ //Time's up, do the final event;
+	end;
+OnEnd:
+	'SnfProgress = 8;
+	donpcevent instance_npcname("#snfescape") + "::OnEnd";
+OnEnd2:
+	enablenpc instance_npcname("芬裡爾#snf5");		
+	enablenpc instance_npcname("#snfwarp2");
+	initnpctimer;
+	end;
+OnTimer3000:
+	mapannounce instance_mapname("1@glast"),"芬裡爾: 冒險者們，我成功取得了巴爾姆神劍，莎拉也已經離開了。",bc_map,"0xFFFF00";
+	end;
+OnTimer6000:
+	stopnpctimer;
+	mapannounce instance_mapname("1@glast"),"芬裡爾: 你們也快些從這裡離開吧，我在遺跡入口等著你們。",bc_map,"0xFFFF00";
+	donpcevent instance_npcname("#cutinc")+"::OnView2";
+	end;
+}
+
+1@glast,374,304,0	script	#snfexit	WARPNPC,2,2,{
+	warp "dali02",92,140;	
+	end;
+OnInstanceInit:
+	disablenpc instance_npcname("#snfexit");
+	end;
+}
+
+1@glast,358,273,0	script	#snfBarricade1	1905,{}
+1@glast,356,273,0	script	#snfBarricade2	1905,{}
+1@glast,354,273,0	script	#snfBarricade3	1905,{}
+1@glast,352,273,0	script	#snfBarricade4	1905,{}
+1@glast,350,273,0	script	#snfBarricade5	1905,{}
+1@glast,348,273,0	script	#snfBarricade6	1905,{}
+1@glast,346,273,0	script	#snfBarricade7	1905,{}
+1@glast,357,274,0	script	#snfBarricade11	1905,{}
+1@glast,355,274,0	script	#snfBarricade12	1905,{}
+1@glast,353,274,0	script	#snfBarricade13	1905,{}
+1@glast,351,274,0	script	#snfBarricade14	1905,{}
+1@glast,349,274,0	script	#snfBarricade15	1905,{}
+1@glast,347,274,0	script	#snfBarricade16	1905,{}
+1@glast,345,274,0	script	#snfBarricade17	1905,{}
+1@glast,42,273,0	script	#snfBarricade21	1905,{}
+1@glast,43,273,0	script	#snfBarricade22	1905,{}
+1@glast,44,273,0	script	#snfBarricade23	1905,{}
+1@glast,45,273,0	script	#snfBarricade24	1905,{}
+1@glast,39,343,0	script	#snfBarricade31	1905,{}
+1@glast,42,343,0	script	#snfBarricade32	1905,{}
+1@glast,45,343,0	script	#snfBarricade33	1905,{}
+1@glast,48,343,0	script	#snfBarricade34	1905,{}
+1@glast,198,238,0	script	#snfBarricade41	1905,{}
+1@glast,199,238,0	script	#snfBarricade42	1905,{}
+1@glast,200,238,0	script	#snfBarricade43	1905,{}
+1@glast,201,238,0	script	#snfBarricade44	1905,{}
+1@glast,186,325,0	script	#snfBarricade51	1905,{}
+1@glast,189,325,0	script	#snfBarricade52	1905,{}
+1@glast,192,325,0	script	#snfBarricade53	1905,{}
+1@glast,195,325,0	script	#snfBarricade54	1905,{}
+1@glast,198,325,0	script	#snfBarricade55	1905,{}
+1@glast,201,325,0	script	#snfBarricade56	1905,{}
+1@glast,204,325,0	script	#snfBarricade57	1905,{}
+1@glast,207,325,0	script	#snfBarricade58	1905,{}
+1@glast,210,325,0	script	#snfBarricade59	1905,{}
+1@glast,213,325,0	script	#snfBarricade60	1905,{}
+1@glast,219,328,0	script	#snfBarricade61	1905,{}
+1@glast,219,329,0	script	#snfBarricade62	1905,{}
+1@glast,219,330,0	script	#snfBarricade63	1905,{}
+1@glast,219,331,0	script	#snfBarricade64	1905,{}
+1@glast,180,328,0	script	#snfBarricade65	1905,{}
+1@glast,180,329,0	script	#snfBarricade66	1905,{}
+1@glast,180,330,0	script	#snfBarricade67	1905,{}
+1@glast,180,331,0	script	#snfBarricade68	1905,{}
+1@glast,102,368,0	script	#snfBarricade71	1905,{}
+1@glast,102,369,0	script	#snfBarricade72	1905,{}
+1@glast,102,370,0	script	#snfBarricade73	1905,{}
+1@glast,102,371,0	script	#snfBarricade74	1905,{}
+1@glast,189,346,0	script	#snfBarricade75	1905,{}
+1@glast,188,345,0	script	#snfBarricade76	1905,{}
+1@glast,187,344,0	script	#snfBarricade77	1905,{}
+1@glast,186,343,0	script	#snfBarricade78	1905,{}
+1@glast,210,346,0	script	#snfBarricade79	1905,{}
+1@glast,211,345,0	script	#snfBarricade80	1905,{}
+1@glast,212,344,0	script	#snfBarricade81	1905,{}
+1@glast,213,343,0	script	#snfBarricade82	1905,{}
+
+1@glast,1,1,0	script	#snfBGM	CLEAR_NPC,{
+	end;
+OnEscape: //BGM147
+	initnpctimer;
+	'BGM$ = "147";
+	'BGMTimer = 123;
+	setnpctimer 300000-'BGMTimer*1000-500;
+	playbgmall 'BGM$,instance_mapname("1@glast");
+	end;		
+OnTimer300000:
+	stopnpctimer;
+	initnpctimer;
+	setnpctimer 300000-('BGMTimer+1)*1000-500;
+	playbgmall 'BGM$,instance_mapname("1@glast");
+	end;		
+OnDisable:
+	stopnpctimer;
+	sleep 3000;
+	playbgmall "95",instance_mapname("1@glast");
+	disablenpc instance_npcname("#snfBGM");
+	end;
+}
+
+1@glast,1,1,0	script	#snffinal	CLEAR_NPC,{
+	end;
+OnStart:
+	hideonnpc instance_npcname("莎拉的幻影#snffinal");
+	donpcevent instance_npcname("#snfwarp3")+"::OnDisable";
+	.@map$ = instance_mapname("1@glast");
+	.@label$ = instance_npcname("#snffinal")+"::OnMyBossDead";
+	monster (.@map$,200,346,"--ja--",3190,1,.@label$);
+	'BossID = $@mobid[0];
+	getunitdata 'BossID,'glastbossdata;
+	setunitdata 'BossID,UMOB_MATKMAX,'glastbossdata[UMOB_MATKMAX]*749/1000;
+	donpcevent instance_npcname("#saramatk") + "::OnStart";
+	'fraction = 5;
+	initnpctimer;
+	end;		
+OnTimer20000:
+	stopnpctimer;
+	initnpctimer;
+	getunitdata 'BossID,.@bossdata;
+	.@map$ = instance_mapname("1@glast");
+	.@x = .@bossdata[6];
+	.@y = .@bossdata[7];
+	if(.@bossdata[2]< 'fraction*.@bossdata[3]/5) {
+		set 'fraction,'fraction-1; 
+		areamonster .@map$,192,339,209,330,"--ja--",3192,2,instance_npcname("#snffinal")+"::OnMyMobDead";
+		areamonster .@map$,192,339,209,330,"--ja--",3195,2,instance_npcname("#snffinal")+"::OnMyMobDead";
+	}
+	if('fraction <= 4){
+		.@label2$ = instance_npcname("#snffinal")+"::OnMyBossDead2";
+		monster (.@map$,.@x,.@y,"",3190,1,.@label2$);
+		.@skillunit = $@mobid[0];
+		getunitdata .@skillunit,.@glastmobdata;
+		setunitdata .@skillunit,UMOB_MATKMAX,.@glastmobdata[UMOB_MATKMAX]*749/1000;
+		setunitdata .@skillunit,UMOB_MODE,0;
+		unitskilluseid .@skillunit, 685, 1;//685 NPC_INVINCIBLE
+		unitskilluseid .@skillunit, 353, 1;
+		unitskillusepos .@skillunit,85,10,.@x+6,.@y,-7;
+		unitskillusepos .@skillunit,85,10,.@x-6,.@y,-7;
+		unitskillusepos .@skillunit,85,10,.@x,.@y+6,-7;
+		unitskillusepos .@skillunit,85,10,.@x,.@y-6,-7;
+		unitskillusepos .@skillunit,21,10,.@x-10,.@y-10,-7;
+		unitskillusepos .@skillunit,21,10,.@x+10,.@y-10,-7;
+		unitskillusepos .@skillunit,21,10,.@x+10,.@y+10,-7;
+		unitskillusepos .@skillunit,21,10,.@x-10,.@y+10,-7;
+		unitskillusepos .@skillunit,21,10,.@x+14,.@y,-7;
+		unitskillusepos .@skillunit,21,10,.@x-14,.@y,-7;
+		unitskillusepos .@skillunit,21,10,.@x,.@y+14,-7;
+		unitskillusepos .@skillunit,21,10,.@x,.@y-14,-7;
+		sleep 5000;
+		getpartymember('partyid,2);
+		copyarray .@partyrid[0],$@partymemberaid[0],$@partymembercount;
+		.@count = $@partymembercount;
+		.@ismember = 0;
+		for(set .@i,0; .@i < .@count; set .@i,.@i+1) {
+			if(!isloggedin(.@partyrid[.@i]))
+				continue;
+			attachrid .@partyrid[.@i];
+			getmapxy .@map2$, .@x, .@y, BL_PC;
+			if(.@map$ == .@map2$) {
+				.@ismember = 1;
+				break;
+			}
+		}
+		if(.@ismember) {
+			unitskillusepos .@skillunit,85,10,.@x,.@y,-7;
+			unitskillusepos .@skillunit,21,10,.@x-5,.@y,-7;
+			unitskillusepos .@skillunit,21,10,.@x+5,.@y,-7;
+			unitskillusepos .@skillunit,21,10,.@x,.@y-5,-7;
+			unitskillusepos .@skillunit,21,10,.@x,.@y+5,-7;
+			sleep 2000;
+		}
+		mobremove .@skillunit;
+	}
+	end;		
+OnMyBossDead:
+	stopnpctimer;
+	getmapxy(.@m$,'passx,'passy,BL_PC);
+	donpcevent instance_npcname("副本寶箱#1@glast")+"::OnEnable";
+	'ClearInatance = 1;
+	donpcevent instance_npcname("#saramatk") + "::OnEnd";
+	killmonster instance_mapname("1@glast"),instance_npcname("#snffinal")+"::OnMyMobDead";
+	killmonster instance_mapname("1@glast"),instance_npcname("#snffinal")+"::OnMyBossDead2";
+	end;
+
+OnMyBossDead2:
+	stopnpctimer;
+	end;
+
+OnMyMobDead:
+	stopnpctimer;
+	end;			
+}
+
+//寶箱
+1@glast,0,0,0	script	副本寶箱#1@glast	obj_a2,{
+	mes "^33CC33【副本寶箱】^000000";
+	mes "你要領取獎勵了嗎？";
+	next;
+	menu
+	"^008000◆先不要◆^000000",get42,
+	"^008000◆領取◆^000000",get422;
+get42:
+	end;
+get422:
+	Instance_PassAnnounce;
+	getitem 607,10;// Yggdrasilberry
+	getitem 608,15;// Seed_Of_Yggdrasil
+	warp "SavePoint",0,0;
+	end;
+OnEnable:
+	enablenpc instance_npcname(strnpcinfo(0));
+	movenpc instance_npcname(strnpcinfo(0)),'passx,'passy;
+	end;
+OnDisable:
+	disablenpc instance_npcname(strnpcinfo(0));
+	end;
+OnInstanceInit:
+	disablenpc instance_npcname(strnpcinfo(0));
+	'map_reward$ = instance_mapname("1@ge_sn");
+	end;
+}

@@ -1,0 +1,74 @@
+uttycty,64,167,5	trader	[製作]老舊古城	542,{
+	disable_items;
+	end;
+OnInit:
+	setnpcicon getnpcid(0),1012,"[製作]老舊古城";
+	waitingroom "[製作]老舊古城",0;
+
+	tradertype(NST_EXPANDED_BARTER);
+	
+	sellitem(2499,10000,-1);
+	sellitemcurrency(6607,1);	
+	endsellitem();
+	sellitem(22006,10000,-1);
+	sellitemcurrency(6607,1);
+	sellitemcurrency(2499,1,4);
+	endsellitem();	
+	sellitem(22007,10000,-1);
+	sellitemcurrency(6607,1);
+	sellitemcurrency(2499,1,4);
+	endsellitem();
+	sellitem(22008,10000,-1);
+	sellitemcurrency(6607,1);
+	sellitemcurrency(2499,1,4);
+	endsellitem();
+	sellitem(22009,10000,-1);
+	sellitemcurrency(6607,1);
+	sellitemcurrency(2499,1,4);
+	endsellitem();
+	sellitem(22010,10000,-1);
+	sellitemcurrency(6607,1);
+	sellitemcurrency(2499,1,4);
+	endsellitem();
+	sellitem(22011,10000,-1);
+	sellitemcurrency(6607,1);
+	sellitemcurrency(2499,1,4);
+	endsellitem();
+	sellitem(22113,10000,-1);
+	sellitemcurrency(6607,1);
+	sellitemcurrency(2499,1,4);
+	endsellitem();
+	sellitem(22114,10000,-1);
+	sellitemcurrency(6607,1);
+	sellitemcurrency(2499,1,4);
+	endsellitem();
+	sellitem(22115,10000,-1);
+	sellitemcurrency(6607,1);
+	sellitemcurrency(2499,1,4);
+	endsellitem();
+	sellitem(22116,10000,-1);
+	sellitemcurrency(6607,1);
+	sellitemcurrency(2499,1,4);
+	endsellitem();
+	sellitem(22117,10000,-1);
+	sellitemcurrency(6607,1);
+	sellitemcurrency(2499,1,4);
+	endsellitem();
+	sellitem(22118,10000,-1);
+	sellitemcurrency(6607,1);
+	sellitemcurrency(2499,1,4);
+	endsellitem();
+	sellitem(4608,1000000,-1);
+	sellitemcurrency(6607,50);
+	sellitemcurrency(6608,50);
+	sellitemcurrency(6755,5);	
+	endsellitem();
+	sellitem(4609,1000000,-1);
+	sellitemcurrency(6607,50);
+	sellitemcurrency(6608,50);
+	sellitemcurrency(6755,5);
+	endsellitem();
+	end;
+OnBuyItem:
+end;
+}

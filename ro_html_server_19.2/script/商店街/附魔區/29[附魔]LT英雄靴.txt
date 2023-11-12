@@ -1,0 +1,18 @@
+//===== Giraffe 家览竟 - Script ===================
+//**********: [ Leo ]**************************
+// 羛么よΑ: https://discord.gg/JVeaMmkRZD
+//===== Description: ==============================
+//
+//[臸]LT璣动箄
+//
+//*************************************************
+//===================叫玂痙戈癟================
+
+uttycty,31,98,4	script	[臸]LT璣动箄	4_m_seiren_uc,{
+	disable_items;
+	item_enchant(20);
+	end;
+OnInit:
+	setnpcicon getnpcid(0),1015,"[臸]LT璣动箄";
+	waitingroom "[臸]LT璣动箄",0;
+}

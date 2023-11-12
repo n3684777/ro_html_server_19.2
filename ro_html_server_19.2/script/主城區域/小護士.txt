@@ -1,0 +1,17 @@
+
+
+uttycty,101,106,3	script	小護士	864,{
+percentheal 100,50;
+sc_start SC_BLESSING,600000,10;
+sc_start SC_INCREASEAGI,600000,10;
+sc_start SC_ADRENALINE,600000,10;
+sc_start SC_ASPERSIO,600000,10;
+
+specialeffect2 66;
+Oninit:
+OnTimer2000:
+showscript "★ 補血++ ★ ";
+	setnpcicon getnpcid(0),1028,"小護士";
+initnpctimer;
+end;
+}

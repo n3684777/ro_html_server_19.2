@@ -1,0 +1,62 @@
+uttycty,64,183,5	trader	[製作]挑戰古城	10300,{
+	disable_items;
+	end;
+OnInit:
+	setnpcicon getnpcid(0),1012,"[製作]挑戰古城";
+	waitingroom "[製作]挑戰古城",0;
+	tradertype(NST_BARTER);
+//頭盔
+	sellitem 19474, -1, 25864, 5;
+	sellitem 19475, -1, 25864, 5;
+	sellitem 19476, -1, 25864, 5;
+	sellitem 19477, -1, 25864, 5;
+	sellitem 19478, -1, 25864, 5;
+	sellitem 19479, -1, 25864, 5;
+	sellitem 19480, -1, 25864, 5;
+	sellitem 19481, -1, 25864, 5;
+	sellitem 19482, -1, 25864, 5;
+	sellitem 19483, -1, 25864, 5;
+	sellitem 19484, -1, 25864, 5;
+	sellitem 19485, -1, 25864, 5;
+	sellitem 19486, -1, 25864, 5;
+	sellitem 19487, -1, 25864, 5;
+	sellitem 19488, -1, 25864, 5;
+	sellitem 19489, -1, 25864, 5;
+	sellitem 19490, -1, 25864, 5;
+	sellitem 19491, -1, 25864, 5;
+	sellitem 19492, -1, 25864, 5;
+
+//武器
+	sellitem 1336, -1, 25866, 10;
+	sellitem 2060, -1, 25866, 10;
+	sellitem 1870, -1, 25866, 10;
+	sellitem 28774, -1, 25866, 5;
+	sellitem 28775, -1, 25866, 5;
+	sellitem 18191, -1, 25866, 10;
+	sellitem 21055, -1, 25866, 10;
+	sellitem 26165, -1, 25866, 10;
+	sellitem 26166, -1, 25866, 10;
+	sellitem 26216, -1, 25866, 10;
+	sellitem 28046, -1, 25866, 10;
+	sellitem 28141, -1, 25866, 10;
+	sellitem 28636, -1, 25866, 10;
+	sellitem 28776, -1, 25866, 10;
+	sellitem 32027, -1, 25866, 10;
+	sellitem 32111, -1, 25866, 10;
+	sellitem 32353, -1, 25866, 10;
+	sellitem 32401, -1, 25866, 10;
+	sellitem 32402, -1, 25866, 10;
+	sellitem 32403, -1, 25866, 10;
+	sellitem 13347, -1, 25866, 10;
+	sellitem 18198, -1, 25866, 10;
+	sellitem 26172, -1, 25866, 10;
+	sellitem 32304, -1, 25866, 10;
+//卡片
+
+	sellitem 27384, -1, 25866, 50;
+	sellitem 27385, -1, 25866, 50;
+
+
+OnBuyItem:
+end;
+}

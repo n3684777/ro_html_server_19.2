@@ -1,0 +1,134 @@
+uttycty,59,153,5	trader	[製作]悔恨之墓	20892,{
+	disable_items;
+	end;
+OnInit:
+	setnpcicon getnpcid(0),1012,"[製作]悔恨之墓";
+	waitingroom "[製作]悔恨之墓",0;
+	
+	tradertype(NST_EXPANDED_BARTER);
+
+	sellitem(100479, 100000, -1);
+	sellitemcurrency(1000367, 50);
+	endsellitem();
+
+	sellitem(100485, 100000, -1);
+	sellitemcurrency(1000367, 50);
+	endsellitem();
+
+	sellitem(100480, 150000, -1);
+	sellitemcurrency(1000367, 250);
+	endsellitem();
+
+	sellitem(100486, 150000, -1);
+	sellitemcurrency(1000367, 250);
+	endsellitem();
+
+	sellitem(600014, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(600016, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(620006, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(630009, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(640014, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(640015, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(700022, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(700023, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(700024, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(700025, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(460013, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(500019, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(500020, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(500027, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(500028, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(530010, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(540014, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(540015, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(550019, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(550020, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(560012, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(560013, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(570013, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(580013, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(590016, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+	sellitem(590017, 10, -1);
+	sellitemcurrency(1000367, 700);
+	endsellitem();
+
+
+end;
+OnBuyItem:
+end;
+}

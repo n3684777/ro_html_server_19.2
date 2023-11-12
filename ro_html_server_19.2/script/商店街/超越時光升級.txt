@@ -1,0 +1,29 @@
+uttycty,90,167,6	trader	超越時光升級	971,{
+	disable_items;
+	end;
+OnInit:
+	waitingroom "超越時光升級",0;
+	setnpcicon getnpcid(0),1012,"超越時光升級";
+	
+	tradertype(NST_EXPANDED_BARTER);
+
+	sellitem(480312, 1, -1,480076,1,9);	
+	sellitemcurrency(1000434, 150);
+	sellitemcurrency(6607, 999);
+	sellitemcurrency(25865, 200);
+	sellitemcurrency(1000620, 3);
+	sellitemcurrency(1001174, 1);
+	endsellitem();
+	
+	sellitem(470183, 1, -1,22202,1,9);	
+	sellitemcurrency(1000434, 150);
+	sellitemcurrency(25866, 150);
+	sellitemcurrency(1000620, 3);
+	sellitemcurrency(1001174, 1);
+	endsellitem();
+	
+	
+	end;
+OnBuyItem:
+end;
+}

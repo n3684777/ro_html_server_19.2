@@ -1,0 +1,74 @@
+-	shop	patmakke	-1,512:100
+
+uttycty,115,167,3	script	染料製作	10057,{
+	set @i,0;
+			mes "^FF0000※一次請選購一種※^000000";
+			close2;
+			callshop "patmakke",1;
+			npcshopattach "patmakke";
+			end;
+			close;
+OnBuyItem:
+	if(.BuildQuest) {
+		for(set .e,0; !compare(getarg(.e+1)+"","Zeny"); set .e,.e+2) {}
+		npcshopadditem "patmakke",getarg(.e+2),getarg(.e)*compare(getarg(.e+1)+"","SZeny");
+		setarray .Shop[.i],getarg(.e+2);
+		set .i,.i+1;
+		if(.i%20==0){sleep(1);}
+		goto Quest_Setup;
+	}
+	if(.Shop[@i]!=@bought_nameid) for(set @i,1; 1; set @i,@i+1) if(.Shop[@i]==@bought_nameid) { set .i,@i; callsub Quest_Setup; }
+	mes "- 製作 ^FF0000"+getitemname(@bought_nameid)+"^000000";
+	mes "- 請準備好下面材料！";
+	for(set @i,0; !compare(getarg(@i+1)+"","Zeny"); set @i,@i+2) mes " ^0066CC" + getitemname(getarg(@i)) + "^000000 x " + ((countitem(getarg(@i))>=getarg(@i+1))? "":"") + "" + getarg(@i+1) + " [^009900" + countitem(getarg(@i)) + "^000000/^FF6600" + getarg(@i+1) + "^000000]"+( countitem(getarg(@i))>=getarg(@i+1)?" ( ^D2691E已完成^000000 )":" ( ^999999未完成^000000 )");
+	if(getarg(@i)) mes " ^FF1493需要製作費用^000000 " + ((Zeny>=getarg(@i))? "^FF0000":"") + "" + getarg(@i) + "^000000 "+((Zeny>=getarg(@i))? "( ^D2691E已完成^000000 )":"( ^999999金錢不足^000000 )");
+	switch(select("-製作 ^FF0000"+getitemname(@bought_nameid)+"^000000:-結束對話")) {
+		case 1:
+			for(set @i,0; !compare(getarg(@i+1)+"","Zeny"); set @i,@i+2) if(countitem(getarg(@i)) < getarg(@i+1)) {
+				next;
+				mes "請補齊 ^FF0000" + (getarg(@i+1)-countitem(getarg(@i))) + "^000000 個 ^FF0000" + getitemname(getarg(@i)) + "^000000 再來找我.";
+				emotion 53;
+				close;
+			}
+			if(Zeny < getarg(@i)) {
+				next;
+				mes "你身上攜帶的金錢不足.";
+				mes "請補齊 ^FF0000" + (getarg(@i)-Zeny) + "Zeny差額再來找我^000000.";
+				emotion 53;
+				close;
+			}
+			for(set @i,0; !compare(getarg(@i+1)+"","Zeny"); set @i,@i+2) delitem getarg(@i),getarg(@i+1);
+			set Zeny,Zeny-getarg(@i);
+			for(set @i,@i+2; getarg(@i+1,0); set @i,@i+2) getitem getarg(@i),getarg(@i+1);
+			specialeffect2 154;
+			emotion 21;
+			end;
+		case 2:
+			emotion 12;
+			end;
+}
+OnInit:
+	setnpcicon getnpcid(0),1012,"染料製作";
+	waitingroom "★ 染料製作 ★ ",0;
+	npcshopitem "patmakke",501,0;
+	npcshopdelitem "patmakke",501,0;
+	set .BuildQuest,1;
+	set .i,1;
+Quest_Setup:
+	switch(.i) 
+	{
+		default: set .BuildQuest,0; set .e,0; set .i,0; end;
+                case 1: callsub OnBuyItem,507,30,973,1,713,1,3500,"SZeny",975,1;
+                case 2: callsub OnBuyItem,509,30,973,1,713,1,3500,"SZeny",982,1;
+                case 3: callsub OnBuyItem,508,30,973,1,713,1,3500,"SZeny",976,1;
+                case 4: callsub OnBuyItem,510,20,973,1,713,1,3500,"SZeny",978,1;
+                case 5: callsub OnBuyItem,507,20,508,20,973,1,974,1,713,1,5000,"SZeny",980,1;
+                case 6: callsub OnBuyItem,510,10,507,30,973,1,974,1,713,1,5000,"SZeny",981,1;
+                case 7: callsub OnBuyItem,510,5,511,20,508,20,973,1,974,1,713,1,5000,"SZeny",979,1;
+                case 8: callsub OnBuyItem,507,30,511,30,508,30,510,5,973,1,974,1,713,1,5000,"SZeny",983,1;
+                case 9: callsub OnBuyItem,971,1,970,1,713,1,3000,"SZeny",973,1;
+                case 10: callsub OnBuyItem,972,1,970,1,713,1,4000,"SZeny",974,1;
+
+	}
+end;		
+}
