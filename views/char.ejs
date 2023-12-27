@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/normalize.css" />
+    <!-- <link rel="stylesheet" href="./css/bootstrap.css" /> -->
+    <!-- <link rel="stylesheet" href="./css/all.css" /> -->
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="/js/socket.js"></script>
+    <script src="/js/all.js"></script>
+    <title>char</title>
+  </head>
+  <body>
+    <div class="container-full"><%- include("./partials/navbar") %></div>
+    <div class="container-full">
+      <div class="jumbotron"></div>
+    </div>
+
+    <div class="container font-white">
+      <table>
+        <tr>
+          <th>角色UID</th>
+          <th>帳號ID</th>
+          <th>角色欄位置</th>
+          <th>遊戲名稱</th>
+ 	  <th>上線狀態</th>
+          <th>職業代碼</th>
+          <th>基本等級</th>
+          <th>JOB等級</th>
+          <th>zeny</th>
+        </tr>
+
+        <% char.forEach(value=>{ %>
+        <form
+          action="/member/char/<%= value.char_id %>?_method=patch"
+          method="POST"
+        >
+          <tr>
+            <td><%= value.char_id %></td>
+            <td><%= value.account_id %></td>
+            <td><%= value.char_num %></td>
+            <td><%= value.name %></td>
+	    <td><%= value.online %></td>
+            <td><%= value.class %></td>
+            <td><%= value.base_level %></td>
+            <td><%= value.job_level %></td>
+            <td>
+              <input type="number" value="<%= value.zeny %>" name="zeny" />
+            </td>
+            <td><button type="submit">儲存</button></td>
+            <td>
+              <!-- <form
+                      action="/member/roles/<%= value.account_id %>?_method=PATCH"
+                      method="POST"
+                    >
+                      <input
+                        type="text"
+                        name="group_id"
+                        value="<%= value.group_id %>"
+                      />
+                      <button type="submit">儲存</button>
+                    </form> -->
+            </td>
+          </tr>
+        </form>
+        <% }) %>
+      </table>
+      <% if(error_msg) { %>
+      <p><%= error_msg %></p>
+      <% } %>
+    </div>
+    <script>
+      //   setInterval("location.href = 'http://localhost:8051/auth/login'", 3000);
+    </script>
+  </body>
+</html>
